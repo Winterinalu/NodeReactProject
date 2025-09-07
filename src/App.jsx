@@ -15,7 +15,7 @@ function App() {
       <main className="hero">
         <div className="hero-content">
           <h1 className="title">Creating Using React+Vite in Github Pages</h1>
-          <p className="subtitle">I am a Student of UCC NORTH BSIT 3A trying to utilized modern and free Tools to create a expand my knowledge is web making.</p>
+          <p className="subtitle">I am a Student of UCC NORTH BSIT 3A trying to utilized modern and free Tools to create and expand my knowledge is web making.</p>
           <div className="hero-ctas">
             <a className="btn primary" href="https://github.com/C-D-Rking/NodeReactProject" target="_blank" rel="noopener noreferrer">Get Started</a>
             <a className="btn ghost" href='https://vite.dev/guide/static-deploy' target='_blank' rel='noopener noreferrer'>Learn More</a>
