@@ -28,8 +28,10 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  /* target the visible hero logo and react logos and use a faster spin */
+  .hero-visual .logo,
+  .logo.react {
+    animation: logo-spin infinite 6s linear;
   }
 }
 
@@ -160,6 +162,26 @@
 }
 .feature h3 { margin:0 0 0.5rem 0 }
 .feature p { color:#54585b; margin:0 }
+
+.feature-img {
+  margin: auto;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(180deg,#f4f4f6,#fff);
+}
+.feature-link {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transition: transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms cubic-bezier(.2,.8,.2,1);
+  cursor: pointer;
+}
+.feature-link:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(11,17,28,0.08); }
+.feature-link:active { transform: translateY(-2px); transition-duration: 80ms; }
 
 /* Footer */
 .site-footer {

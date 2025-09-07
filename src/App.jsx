@@ -12,7 +12,7 @@ function App() {
       <main className="hero">
         <div className="hero-content">
           <h1 className="title">Creating Using React+Vite in Github Pages</h1>
-          <p className="subtitle">I am a Student of UCC NORTH BSIT 3A trying to utlized modern and free Tools to create a expand my knowledge is web making.</p>
+          <p className="subtitle">I am a Student of UCC NORTH BSIT 3A trying to utilized modern and free Tools to create a expand my knowledge is web making.</p>
           <div className="hero-ctas">
             <a className="btn primary" href="https://github.com/C-D-Rking/NodeReactProject" target="_blank" rel="noopener noreferrer">Get Started</a>
             <a className="btn ghost" href='https://vite.dev/guide/static-deploy' target='_blank' rel='noopener noreferrer'>Learn More</a>
@@ -26,16 +26,25 @@ function App() {
 
       <section className="features">
         <div className="feature">
-          <h3>Fast</h3>
-          <p>Optimized for performance and quick interactions.</p>
+          <a href="https://github.com/" target='_blank' className="feature-link">
+            <img className="feature-img" src="./src/assets/Github.png" alt="Fast feature" />
+          </a>
+          <h3>Github</h3>
+          <p>It leverages Git, a distributed version control system, to allow multiple individuals to work on the same codebase simultaneously without overwriting each other's changes. It tracks every modification, enabling users to revert to previous versions, compare changes, and merge contributions seamlessly.</p>
         </div>
         <div className="feature">
-          <h3>Minimal</h3>
-          <p>Only the essentials — clear hierarchy and thoughtful spacing.</p>
+          <a href="https://nodejs.org/en/" target='_blank' className="feature-link">
+            <img className="feature-img" src="./src/assets/React.png" alt="Minimal feature" />
+          </a>
+          <h3>React</h3>
+          <p>React is a JavaScript library primarily used for building user interfaces (UIs), particularly for single-page applications. Its core purpose is to facilitate the creation of interactive and dynamic web experiences by allowing developers to build UIs using a component-based architecture.</p>
         </div>
         <div className="feature">
-          <h3>Reliable</h3>
-          <p>Simple architecture that scales with your needs.</p>
+          <a href="https://vite.dev/" target='_blank' className="feature-link">
+            <img className="feature-img" src="./src/assets/Vite.jpg" alt="Reliable feature" />
+          </a>
+          <h3>Vite</h3>
+          <p>Vite is a build tool used in web development to provide a faster and leaner development experience by offering an instant dev server with hot module replacement and a production build command that uses Rollup to output optimized static assets.</p>
         </div>
       </section>
 
