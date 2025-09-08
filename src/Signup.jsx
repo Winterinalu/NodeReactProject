@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import './Signup.css'
 import { auth, db } from './firebase'
-import { sendSignInLinkToEmail, signInWithEmailLink, updateProfile, signOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export default function Signup() {
@@ -17,7 +17,6 @@ export default function Signup() {
   const [isValid, setIsValid] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [pendingEmailSent, setPendingEmailSent] = useState(false)
 
   const validate = useCallback(() => {
     const newErrors = {}
@@ -52,20 +51,18 @@ export default function Signup() {
     setLoading(true)
     setErrors((s) => ({ ...s, firebase: undefined }))
     try {
-      // Use email-link sign-in so the account is only created after the user clicks the emailed link.
-      const actionCodeSettings = {
-        // The URL the user will be redirected to after clicking the link.
-        // Using hash router, send them back to the signup route so they can finish the flow.
-        url: window.location.origin + '/#/signup',
-        handleCodeInApp: true
-      }
-  await sendSignInLinkToEmail(auth, email, actionCodeSettings)
-  // Persist the email so we can complete sign-in when the user returns (also helps if they open link on same device)
-  window.localStorage.setItem('emailForSignIn', email)
-  // Ensure we are signed out locally — some environments can surface a currentUser; explicitly sign out to be safe.
-  try { await signOut(auth) } catch { /* non-fatal */ }
-  setPendingEmailSent(true)
-      console.log('Email sign-in link sent to', email)
+      const userCred = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCred.user
+      // finalize immediately: set displayName and create Firestore profile
+      await updateProfile(user, { displayName: username })
+      await setDoc(doc(db, 'users', user.uid), {
+        username,
+        email,
+        role: 'user',
+        createdAt: serverTimestamp()
+      })
+      console.log('User created', user.uid)
+      navigate('/')
     } catch (err) {
       console.error('Firebase signup error', err)
       setErrors((s) => ({ ...s, firebase: err.message || String(err) }))
@@ -74,83 +71,9 @@ export default function Signup() {
     }
   }
 
-  // finalize: called after the user completed email-link sign-in and is authenticated
-  const finalizeAccount = useCallback(async (user) => {
-    try {
-      setLoading(true)
-      await updateProfile(user, { displayName: username })
-      await setDoc(doc(db, 'users', user.uid), {
-        username,
-        email: user.email,
-        role: 'user',
-        createdAt: serverTimestamp()
-      })
-      // stop waiting and navigate
-      setPendingEmailSent(false)
-      window.localStorage.removeItem('emailForSignIn')
-      console.log('Signup finalized', { uid: user.uid })
-      navigate('/')
-    } catch (error) {
-      console.error('Finalize error', error)
-      setErrors((s) => ({ ...s, firebase: error.message || String(error) }))
-    } finally {
-      setLoading(false)
-    }
-  }, [username, navigate])
+  // (no-op here) account is finalized immediately after creation in handleSubmit
 
-  // resend sign-in link
-  const resendVerification = async () => {
-    try {
-      const actionCodeSettings = {
-        url: window.location.origin + '/#/signup',
-        handleCodeInApp: true
-      }
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings)
-      window.localStorage.setItem('emailForSignIn', email)
-      setErrors((s) => ({ ...s, firebase: 'Sign-in link resent.' }))
-    } catch (err) {
-      setErrors((s) => ({ ...s, firebase: err.message || String(err) }))
-    }
-  }
-
-  const cancelVerification = async () => {
-    // clear pending state and stored email
-    try {
-      await signOut(auth)
-    } catch (error) {
-      console.warn('signOut error', error)
-    }
-    window.localStorage.removeItem('emailForSignIn')
-    setPendingEmailSent(false)
-  }
-
-  const checkVerification = async () => {
-    // Attempt to complete sign-in using the link the user clicked in their email.
-    try {
-      const url = window.location.href
-      const storedEmail = window.localStorage.getItem('emailForSignIn')
-      let emailForSignIn = storedEmail || email
-      if (!emailForSignIn) {
-        // If no email in storage or current field, ask the user to re-enter.
-        // Keep this minimal: a prompt is acceptable for now.
-        emailForSignIn = window.prompt('Please provide the email you used to sign up:')
-      }
-      if (!emailForSignIn) {
-        setErrors((s) => ({ ...s, firebase: 'Email required to complete sign-in.' }))
-        return
-      }
-
-      const result = await signInWithEmailLink(auth, emailForSignIn, url)
-      const user = result.user || auth.currentUser
-      if (user) {
-        await finalizeAccount(user)
-      } else {
-        setErrors((s) => ({ ...s, firebase: 'Could not complete sign-in.' }))
-      }
-    } catch (err) {
-      setErrors((s) => ({ ...s, firebase: err.message || String(err) }))
-    }
-  }
+  // No email-link flow anymore; immediate registration is used.
 
   useEffect(() => {
     const onKey = (e) => {
@@ -182,21 +105,6 @@ export default function Signup() {
           <button className="btn ghost small" onClick={() => navigate('/')}>← Back</button>
           <h2 style={{ marginTop: '1rem' }}>Sign Up</h2>
 
-      {pendingEmailSent ? (
-            <div className="verification-container">
-              <p>
-        A sign-in link has been sent to <strong>{email}</strong>.
-        Your account will be created only after you click the link in that email.
-              </p>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                <button className="btn" onClick={checkVerification} disabled={loading}>I've confirmed</button>
-                <button className="btn ghost" onClick={resendVerification} disabled={loading}>Resend email</button>
-                <button className="btn ghost small" onClick={cancelVerification} disabled={loading}>Cancel</button>
-              </div>
-              {loading && <p style={{ marginTop: '0.5rem' }}>Processing...</p>}
-              {errors.firebase && <p className="error">{errors.firebase}</p>}
-            </div>
-          ) : (
             <form className="signup-form" onSubmit={handleSubmit}>
           {/* Username */}
           <div className="form-group">
@@ -259,7 +167,6 @@ export default function Signup() {
             {loading && <p style={{ marginTop: '0.5rem' }}>Creating account...</p>}
             {errors.firebase && <p className="error">{errors.firebase}</p>}
             </form>
-          )}
         </div>
       </div>
     </div>
