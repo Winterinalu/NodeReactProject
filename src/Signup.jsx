@@ -18,9 +18,6 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [pendingUser, setPendingUser] = useState(null)
-  // verificationSent removed; we only track pendingUser/polling
-  const [polling, setPolling] = useState(false)
-  const pollRef = React.useRef(null)
 
   const validate = useCallback(() => {
     const newErrors = {}
@@ -60,8 +57,7 @@ export default function Signup() {
       // Send verification email and wait for the user to confirm before creating their Firestore profile
   await sendEmailVerification(user)
   setPendingUser(user)
-      // start polling to detect email verification
-      setPolling(true)
+  // waiting for the user to verify their email
       console.log('Verification email sent to', email)
     } catch (err) {
       console.error('Firebase signup error', err)
@@ -82,8 +78,7 @@ export default function Signup() {
         role: 'user',
         createdAt: serverTimestamp()
       })
-      // stop polling and navigate
-      setPolling(false)
+  // stop waiting and navigate
       setPendingUser(null)
       console.log('Signup finalized', { uid: user.uid })
       navigate('/')
@@ -114,7 +109,6 @@ export default function Signup() {
       console.warn('signOut error', error)
     }
     setPendingUser(null)
-    setPolling(false)
   }
 
   const checkVerification = async () => {
@@ -140,26 +134,7 @@ export default function Signup() {
     return () => window.removeEventListener('keydown', onKey)
   }, [navigate])
 
-  // Polling effect: when polling is true and pendingUser exists, poll every 5s
-  useEffect(() => {
-    if (polling && pendingUser) {
-      pollRef.current = setInterval(async () => {
-        try {
-          await reload(pendingUser)
-          const fresh = auth.currentUser || pendingUser
-          if (fresh.emailVerified) {
-            clearInterval(pollRef.current)
-            await finalizeAccount(fresh)
-          }
-        } catch (error) {
-          console.warn('Polling error', error)
-        }
-      }, 5000)
-    }
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current)
-    }
-  }, [polling, pendingUser, finalizeAccount])
+  // No automatic polling: finalization only happens when the user clicks "I've confirmed"
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true); return () => setMounted(false) }, [])
