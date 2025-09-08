@@ -1,0 +1,30 @@
+/* Signup / Card styles moved from App.css */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+}
+
+.btn {
+  border: 0;
+  background: #111827;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn.small {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+.btn.ghost {
+  background: transparent;
+  color: #111827;
+  border: 1px solid rgba(17,24,39,0.06);
+}
