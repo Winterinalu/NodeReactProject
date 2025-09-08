@@ -3,9 +3,14 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* default to light theme so browsers that don't report a preference get the white background */
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* light theme variables */
+  --text: #213547;
+  --surface: #fbfbfb;
+  --card-bg: #ffffff;
+  color: var(--text);
+  background-color: var(--surface);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -54,15 +59,15 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+  /* dark theme variables */
+  --text: rgba(255, 255, 255, 0.87);
+  --surface: #242424;
+  --card-bg: #1a1a1a;
+  color: var(--text);
+  background-color: var(--surface);
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  a:hover { color: #747bff; }
+  button { background-color: #1a1a1a; }
 }

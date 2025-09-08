@@ -4,6 +4,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import Signup from './Signup.jsx'
+import './firebase'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

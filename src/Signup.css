@@ -1,30 +1,53 @@
-/* Signup / Card styles moved from App.css */
-#root {
-  max-width: 1280px;
+/* Signup / Card styles */
+
+/* Modal overlay - strict scope so signup styles don't leak */
+.signup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  /* by default (light theme) use a very light translucent overlay so app background remains visible */
+  background: rgba(255,255,255,0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 1000; /* sits above navbar */
+}
+
+.signup-modal-overlay .signup-card {
+  max-width: 720px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(15,23,32,0.06);
+  text-align: left;
+  position: relative;
+  z-index: 1001;
 }
 
-.card {
-  padding: 2em;
-}
+/* Scoped under modal overlay */
+.signup-modal-overlay .signup-card .signup-container { padding: 0.5rem 0.25rem }
+.signup-modal-overlay .signup-card h2 { margin: 0 0 0.5rem 0 }
 
-.btn {
-  border: 0;
-  background: #111827;
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+/* Scoped form + controls */
+.signup-modal-overlay .signup-card .signup-form { margin-top:1rem; display:flex; flex-direction:column; gap:0.75rem }
+.signup-modal-overlay .signup-card .form-group { display:flex; flex-direction:column }
+.signup-modal-overlay .signup-card .form-group label { font-weight:600; margin-bottom:0.35rem; color:var(--text) }
+.signup-modal-overlay .signup-card .form-group input {
+  padding: 0.6rem 0.75rem; border:1px solid #e6e8eb; border-radius:8px; font-size:1rem; background:#fff
 }
-.btn.small {
-  padding: 0.4rem 0.6rem;
-  font-size: 0.9rem;
-}
-.btn.ghost {
-  background: transparent;
-  color: #111827;
-  border: 1px solid rgba(17,24,39,0.06);
+.signup-modal-overlay .signup-card .form-group input:focus { outline:none; border-color:var(--accent); box-shadow:0 6px 24px rgba(100,108,255,0.08) }
+.signup-modal-overlay .signup-card .error { color:var(--danger); font-size:0.85rem; margin-top:0.25rem }
+.signup-modal-overlay .signup-card .floating-container { display:flex; justify-content:flex-end; margin-bottom:0.25rem }
+.signup-modal-overlay .signup-card .signup-form > button[type="submit"] { margin-top:0.5rem; align-self:stretch }
+
+@media (max-width:560px) { .signup-modal-overlay .signup-card { margin:0; padding:1rem; width:100% } }
+
+@media (prefers-color-scheme: dark) {
+  /* in dark mode, use a darker tint so the overlay reads well */
+  .signup-modal-overlay { background: rgba(0,0,0,0.36); }
+  .signup-modal-overlay .signup-card { background: var(--card-bg); }
 }
