@@ -59,10 +59,12 @@ export default function Signup() {
         url: window.location.origin + '/#/signup',
         handleCodeInApp: true
       }
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings)
-      // Persist the email so we can complete sign-in when the user returns (also helps if they open link on same device)
-      window.localStorage.setItem('emailForSignIn', email)
-      setPendingEmailSent(true)
+  await sendSignInLinkToEmail(auth, email, actionCodeSettings)
+  // Persist the email so we can complete sign-in when the user returns (also helps if they open link on same device)
+  window.localStorage.setItem('emailForSignIn', email)
+  // Ensure we are signed out locally — some environments can surface a currentUser; explicitly sign out to be safe.
+  try { await signOut(auth) } catch { /* non-fatal */ }
+  setPendingEmailSent(true)
       console.log('Email sign-in link sent to', email)
     } catch (err) {
       console.error('Firebase signup error', err)
