@@ -10,7 +10,10 @@ function Navbar({ logo }) {
           <img src={logo} alt="logo" className="nav-logo" />
           <span className="brand-name">Hekk Represents</span>
         </Link>
-  <Link className="btn btn-signup" to="/signup">Sign Up</Link>
+  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+    <Link className="btn btn-signin" to="/signin">Sign In</Link>
+    <Link className="btn btn-signup" to="/signup">Sign Up</Link>
+  </div>
       </div>
     </nav>
   )
